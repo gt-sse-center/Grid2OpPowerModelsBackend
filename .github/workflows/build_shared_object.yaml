@@ -31,11 +31,6 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y build-essential libunwind-dev || true
 
-#      - name: Install dependencies (macOS)
-#        if: matrix.os == 'macos-latest'
-#        run: |
-#          brew install libunwind || true
-
       - name: Install dependencies (Windows)
         shell: powershell
         if: matrix.os == 'windows-latest'
@@ -62,7 +57,7 @@ jobs:
           julia --project=. compile_library.jl
 
       - name: Upload shared library artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shared-library-${{ matrix.os }}
           path: |
