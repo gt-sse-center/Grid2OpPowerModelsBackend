@@ -41,6 +41,7 @@ jobs:
 
       - name: Install Julia dependencies
         run: |
+          cd PowerModelsLibrary
           julia --project=. -e '
             using Pkg
             Pkg.instantiate()
@@ -57,6 +58,6 @@ jobs:
         with:
           name: shared-library-${{ matrix.os }}
           path: |
-            **/*.so
-            **/*.dll
-            **/*.dylib
+            PowerModelsLibrary/**/*.so
+            PowerModelsLibrary/**/*.dll
+            PowerModelsLibrary/**/*.dylib
