@@ -37,11 +37,13 @@ jobs:
 #          brew install libunwind || true
 
       - name: Install dependencies (Windows)
+        shell: powershell
         if: matrix.os == 'windows-latest'
         run: |
           choco install llvm -y
           choco install msys2 -y
-          refreshenv
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          RefreshEnv
 
       - name: Install Julia dependencies
         run: |
