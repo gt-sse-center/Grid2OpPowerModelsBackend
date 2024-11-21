@@ -51,7 +51,9 @@ jobs:
           '
 
       - name: Compile shared library
-        run: julia compile_powermodels.jl
+        run: |
+          cd PowerModelsLibrary
+          julia compile_powermodels.jl
 
       - name: Upload shared library artifact
         uses: actions/upload-artifact@v3
