@@ -26,10 +26,14 @@ jobs:
         with:
           version: '1.11.1'
 
-      - name: Install dependencies (Linux/macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update && sudo apt-get install -y build-essential libunwind-dev || true
+
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
           brew install libunwind || true
 
       - name: Install dependencies (Windows)
@@ -53,9 +57,9 @@ jobs:
 
       - name: Compile shared library
         run: |
+          cd PowerModelsLibrary
           pwd
           ls
-          cd PowerModelsLibrary
           julia compile_powermodels.jl
 
       - name: Upload shared library artifact
