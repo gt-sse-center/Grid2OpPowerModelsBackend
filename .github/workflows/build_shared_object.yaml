@@ -46,7 +46,6 @@ jobs:
       - name: Install Julia dependencies
         run: |
           cd PowerModelsLibrary
-          pwd
           julia --project=. -e '
             using Pkg
             Pkg.instantiate()
@@ -58,9 +57,7 @@ jobs:
       - name: Compile shared library
         run: |
           cd PowerModelsLibrary
-          pwd
-          ls
-          julia compile_powermodels.jl
+          julia compile_library.jl
 
       - name: Upload shared library artifact
         uses: actions/upload-artifact@v3
