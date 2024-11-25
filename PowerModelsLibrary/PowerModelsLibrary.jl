@@ -1,7 +1,6 @@
 #=
 PowerModelsLibrary:
 - Julia version: 1.11.1
-- Author: krachwal
 - Date: 2024-11-21
 =#
 module PowerModelsLibrary
