@@ -20,8 +20,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-[tool.setuptools]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
-test = [
-    "pytest"
-]
+[tool.setuptools]
