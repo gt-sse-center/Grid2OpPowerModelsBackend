@@ -24,6 +24,15 @@ version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 
 [tool.setuptools]
+packages = ["Grid2OpPowerModelsBackend"]
 
 [tool.setuptools.package-data]
-"PowerModelsLibrary.libpowermodels.lib.julia" = ["*"]
+Grid2OpPowerModelsBackend = [
+    "libs/linux/libjulia.so",
+    "libs/macos/libjulia.dylib",
+    "libs/windows/libjulia.dll"
+]
+# "PowerModelsLibrary.libpowermodels.lib.julia" = ["*"]
+[tool.setuptools.include-package-data]
+# ensure shared lib binaries are included in the package
+include-package-data = true

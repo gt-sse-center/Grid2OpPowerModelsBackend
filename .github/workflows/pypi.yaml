@@ -1,9 +1,11 @@
 name: PyPi Package Upload
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - Build Shared Library
+    types:
+      - completed
 
   workflow_dispatch:
 
@@ -14,6 +16,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +30,57 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build
+
+      - name: Download Linux shared library artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shared-library-ubuntu-latest
+          path: artifacts/linux/
+
+      - name: Download macOS shared library artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shared-library-macos-latest
+          path: artifacts/macos/
+
+      - name: Download Windows shared library artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shared-library-windows-latest
+          path: artifacts/windows/
+
+      - name: Verify all downloaded artifacts
+        run: |
+          echo "Verifying all downloaded artifacts:"
+          ls -l artifacts/*
+
+      - name: Prepare Python package
+        run: |
+          echo "Bundling all shared libraries into Python package..."
+          mkdir -p libs/linux
+          mkdir -p libs/macos
+          mkdir -p libs/windows
+          cp artifacts/linux/* libs/linux/
+          cp artifacts/macos/* libs/macos/
+          cp artifacts/windows/* libs/windows/
+
+      - name: Build Python wheel
+        run: |
+          cd python-wrapper
+          python setup.py bdist_wheel
+          ls -l dist/
+
+
+
+
+      - name: Build Python wrapper
+        run: |
+          echo "Bundling Python wrapper with shared library..."
+          cp lib/libjulia.so python-wrapper/
+          cd python-wrapper
+          echo "Simulating Python wrapper build"
+          ls -l
+          
 
       - name: Build package
         run: python -m build
