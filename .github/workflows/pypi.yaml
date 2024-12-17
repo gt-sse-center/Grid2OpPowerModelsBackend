@@ -2,7 +2,7 @@ name: PyPi Package Upload
 
 on:
   push:
-    #main
+    main
 
 # Disallow multiple parallel runs of this action
 concurrency:
