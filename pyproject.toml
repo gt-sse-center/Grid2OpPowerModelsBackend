@@ -24,3 +24,6 @@ version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 
 [tool.setuptools]
+
+[tool.setuptools.package-data]
+"PowerModelsLibrary.libpowermodels.lib.julia" = ["*"]
