@@ -2,10 +2,8 @@ name: PyPi Package Upload
 
 on:
   workflow_run:
-    workflows:
-      - Build Shared Library
-    types:
-      - completed
+    workflows: ["Build Shared Library"]
+    types: [completed]
 
   workflow_dispatch:
 
