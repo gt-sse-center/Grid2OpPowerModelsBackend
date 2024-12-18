@@ -50,12 +50,12 @@ jobs:
       - name: Prepare Python package
         run: |
           echo "Bundling shared libs into Python package"
-          mkdir -p libs/linux
-          mkdir -p libs/macos
-          mkdir -p libs/windows
-          cp artifacts/linux/* libs/linux/
-          cp artifacts/macos/* libs/macos/
-          cp artifacts/windows/* libs/windows/
+          mkdir -p src/PowerModelsBackend/shared_objects/linux
+          mkdir -p src/PowerModelsBackend/shared_objects/macos
+          mkdir -p src/PowerModelsBackend/shared_objects/windows
+          cp artifacts/linux/* src/PowerModelsBackend/shared_objects/linux/
+          cp artifacts/macos/* src/PowerModelsBackend/shared_objects/macos/
+          cp artifacts/windows/* src/PowerModelsBackend/shared_objects/windows/
 
       - name: Build package
         run: python -m build
