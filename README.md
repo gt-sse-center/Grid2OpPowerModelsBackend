@@ -6,8 +6,29 @@ CI/CD workflows can be found in the .github/workflows directory. GitHub Actions 
 
 From the root of this repository, to produce the shared library and build this project:
 ```shell
+# enter the Julia source directory
 cd PowerModelsLibrary
+# create shared libraries from Julia code
 julia --project=. compile_library.jl
+# copy shared libraries into Python source directory
 cd ..
-cp -rf PowerModelsLibrary/libpowermodels src/PowerModelsBackend/shared_objects/
+mkdir -p src/PowerModelsBackend/shared_objects/libpowermodels
+cp -r PowerModelsLibrary/libpowermodels/lib/julia src/PowerModelsBackend/shared_objects/libpowermodels/
+cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* src/PowerModelsBackend/shared_objects/libpowermodels/
+# build Python backend source and deposit into dist directory
+python3 -m pip install --upgrade pip build
+python3 -m build
+# 
+```
+
+To use the resulting build locally in another project, 
+```shell
+python3 -m pip install Grid2OpPowerModelsBackend-<version>-py3-none-any.whl
+```
+
+Test from Python code:
+```python
+from PowerModelsBackend import PowerModelsBackend
+backend = PowerModelsBackend()
+backend.load_data("path/to/matpower/file.m")
 ```

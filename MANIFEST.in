@@ -1,1 +1,3 @@
-include src/PowerModelsBackend/shared_objects/*
+include README.md
+include LICENSE
+recursive-include src/PowerModelsBackend/shared_objects/libpowermodels *

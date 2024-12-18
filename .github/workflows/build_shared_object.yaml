@@ -1,4 +1,4 @@
-name: Build Shared Library
+name: Build and Publish Shared Library
 
 on:
   push
@@ -14,26 +14,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Julia
-        uses: julia-actions/setup-julia@v1
+        uses: julia-actions/setup-julia@v3
         with:
           version: '1.11.1'
 
-      - name: Install dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update && sudo apt-get install -y build-essential libunwind-dev || true
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
-      - name: Install dependencies (Windows)
-        shell: powershell
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install llvm -y
-          choco install msys2 -y
-          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-          RefreshEnv
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip build twine
 
       - name: Install Julia dependencies
         run: |
@@ -51,11 +45,17 @@ jobs:
           cd PowerModelsLibrary
           julia --project=. compile_library.jl
 
-      - name: Upload shared library artifact
-        uses: actions/upload-artifact@v4
+      - name: Copy shared library
+        run: |
+          mkdir -p src/PowerModelsBackend/shared_objects/libpowermodels
+          cp -r PowerModelsLibrary/libpowermodels/lib/julia src/PowerModelsBackend/shared_objects/libpowermodels/
+          cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* src/PowerModelsBackend/shared_objects/libpowermodels/
+
+      - name: Build PyPI package
+        run: python -m build
+
+      - name: Publish package
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          name: shared-library-${{ matrix.os }}
-          path: |
-            PowerModelsLibrary/**/*.so
-            PowerModelsLibrary/**/*.dll
-            PowerModelsLibrary/**/*.dylib
+          password: ${{ secrets.PYPI_API_KEY }}

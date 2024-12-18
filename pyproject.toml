@@ -4,6 +4,7 @@ description = "A PowerModels Backend for Grid2Op"
 authors = [
     { name = "Katarzyna Rachwal", email = "kasiarachwal@gmail.com" }
 ]
+keywords = ["grid2op", "powermodels", "backend"]
 readme = "README.md"
 license = { file = "LICENSE" }
 dynamic = ["version"]
@@ -23,7 +24,8 @@ build-backend = "setuptools.build_meta"
 version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 
-[tool.setuptools]
-
 [tool.setuptools.package-data]
-"PowerModelsBackend.shared_objects.libpowermodels" = ["*"]
+PowerModelsBackend = ["shared_objects/libpowermodels/**/*"]
+
+[tool.setuptools.exclude-package-data]
+PowerModelsBackend = ["__pycache__/*", "*.pyc", "*.pyo"]
