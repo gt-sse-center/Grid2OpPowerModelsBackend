@@ -1,7 +1,6 @@
 name: PyPi Package Upload
 
-on:
-  workflow_dispatch
+on: [workflow_dispatch]
 
 # Disallow multiple parallel runs of this action
 concurrency:
