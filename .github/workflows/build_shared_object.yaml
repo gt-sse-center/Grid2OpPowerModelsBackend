@@ -58,10 +58,8 @@ jobs:
         run: |
           $platformDir = "src\\PowerModelsBackend\\shared_objects\\libpowermodels\\${{ matrix.os }}"
           mkdir -Force -Path $platformDir 
-          ls PowerModelsLibrary
           ls PowerModelsLibrary\libpowermodels
-          ls PowerModelsLibrary\libpowermodels\lib
-          Copy-Item -Path PowerModelsLibrary\libpowermodels\lib\* -Destination $platformDir
+          Copy-Item -Path PowerModelsLibrary\libpowermodels\* -Destination $platformDir
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
