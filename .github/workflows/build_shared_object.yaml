@@ -57,10 +57,11 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $platformDir = "src\\PowerModelsBackend\\shared_objects\\libpowermodels\\${{ matrix.os }}"
-          mkdir -Force -Path $platformDir
-          Copy-Item -Recurse -Path "PowerModelsLibrary\\libpowermodels\\lib\\julia" -Destination $platformDir
-          Copy-Item -Path "PowerModelsLibrary\\libpowermodels\\lib\\libpowermodels.*" -Destination $platformDir
-        
+          mkdir -Force -Path $platformDir 
+          ls PowerModelsLibrary
+          ls PowerModelsLibrary\libpowermodels
+          ls PowerModelsLibrary\libpowermodels\lib
+          Copy-Item -Path PowerModelsLibrary\libpowermodels\lib\* -Destination $platformDir
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
