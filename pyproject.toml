@@ -16,7 +16,8 @@ requires = [
     "setuptools",
     "setuptools-scm",
     "wheel",
-    "pip"
+    "pip",
+    "grid2op"
 ]
 build-backend = "setuptools.build_meta"
 

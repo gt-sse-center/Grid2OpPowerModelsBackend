@@ -21,9 +21,9 @@ python3 -m build
 # 
 ```
 
-To use the resulting build locally in another project, 
+To use the resulting build locally in another project, check the path of the `.whl` file in the dist directory and install it directly.
 ```shell
-python3 -m pip install Grid2OpPowerModelsBackend-<version>-py3-none-any.whl
+python3 -m pip install Grid2OpPowerModelsBackend-0.1.dev32-py3-none-any.whl
 ```
 
 Test from Python code:
