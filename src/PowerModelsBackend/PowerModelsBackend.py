@@ -1,6 +1,7 @@
 import os
 from typing import Union, Optional, Tuple
 import platform
+# using cffi instead of ctypes because of the data complexity and performance needs of this application
 from cffi import FFI
 import grid2op
 
@@ -12,7 +13,7 @@ class PowerModelsBackend(grid2op.Backend):
         # Initialize the cffi interface for PowerModels shared lib
         ffi = FFI()
         SYSTEM = platform.system().lower()
-        SHARED_OBJECTS_DIR = os.path.join(os.path.dirname(__file__), "PowerModelsLibrary", "libpowermodels", "lib",
+        SHARED_OBJECTS_DIR = os.path.join(os.path.dirname(__file__), "PowerModelsLibrary", "shared_objects", "libpowermodels"
                                           "julia")
         if SYSTEM == "linux":
             SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "libpowermodels.so")

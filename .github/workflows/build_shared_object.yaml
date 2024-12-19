@@ -47,15 +47,42 @@ jobs:
 
       - name: Copy shared library
         run: |
-          mkdir -p src/PowerModelsBackend/shared_objects/libpowermodels
-          cp -r PowerModelsLibrary/libpowermodels/lib/julia src/PowerModelsBackend/shared_objects/libpowermodels/
-          cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* src/PowerModelsBackend/shared_objects/libpowermodels/
+          PLATFORM_DIR="src/PowerModelsBackend/shared_objects/libpowermodels/${{ matrix.os }}_${{ matrix.arch }}"
+          mkdir -p $PLATFORM_DIR
+          cp -r PowerModelsLibrary/libpowermodels/lib/julia $PLATFORM_DIR/
+          cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* $PLATFORM_DIR/
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}_${{ matrix.arch }}
+          path: src/PowerModelsBackend/shared_objects/libpowermodels/${{ matrix.os }}_${{ matrix.arch }}
+
+
+      - name: Build PyPI package
+        run: python -m build
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: src/PowerModelsBackend/shared_objects/libpowermodels/
+
+      - name: Organize shared libraries for all platforms
+        run: ls src/PowerModelsBackend/shared_objects/libpowermodels
 
       - name: Build PyPI package
         run: python -m build
 
       - name: Publish package
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_KEY }}
