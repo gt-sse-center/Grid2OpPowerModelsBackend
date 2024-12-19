@@ -47,10 +47,17 @@ jobs:
 
       - name: Copy shared library
         run: |
-          PLATFORM_DIR="src/PowerModelsBackend/shared_objects/libpowermodels/${{ matrix.os }}_${{ matrix.arch }}"
-          mkdir -p $PLATFORM_DIR
-          cp -r PowerModelsLibrary/libpowermodels/lib/julia $PLATFORM_DIR/
-          cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* $PLATFORM_DIR/
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            $platformDir = "src\\PowerModelsBackend\\shared_objects\\libpowermodels\\windows-latest_x64"
+            mkdir -p $platformDir
+            Copy-Item -Recurse -Path "PowerModelsLibrary\\libpowermodels\\lib\\julia" -Destination $platformDir
+            Copy-Item -Path "PowerModelsLibrary\\libpowermodels\\lib\\libpowermodels.*" -Destination $platformDir
+          else
+            PLATFORM_DIR="src/PowerModelsBackend/shared_objects/libpowermodels/${{ matrix.os }}_${{ matrix.arch }}"
+            mkdir -p $PLATFORM_DIR
+            cp -r PowerModelsLibrary/libpowermodels/lib/julia $PLATFORM_DIR/
+            cp PowerModelsLibrary/libpowermodels/lib/libpowermodels.* $PLATFORM_DIR/
+          fi
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
