@@ -9,20 +9,22 @@ import grid2op
 class PowerModelsBackend(grid2op.Backend):
     shunts_data_available = True
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # Initialize the cffi interface for PowerModels shared lib
         ffi = FFI()
         SYSTEM = platform.system().lower()
-        SHARED_OBJECTS_DIR = os.path.join(os.path.dirname(__file__), "PowerModelsLibrary", "shared_objects", "libpowermodels"
-                                          "julia")
+        SHARED_OBJECTS_DIR = os.path.join(os.path.dirname(__file__), "shared_objects", "libpowermodels", "julia")
+        print(SHARED_OBJECTS_DIR)
         if SYSTEM == "linux":
-            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "libpowermodels.so")
+            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "ubuntu-latest", "libpowermodels.so")
         elif SYSTEM == "darwin":
-            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "libpowermodels.dylib")
+            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "macos-latest", "libpowermodels.dylib")
         elif SYSTEM == "windows":
-            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "libpowermodels.dll")
+            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "windows-latest", "libpowermodels.dll")
         else:
-            raise RuntimeError(f"Unsupported platform: {SYSTEM}")
+            # assume local
+            SHARED_OBJECT = os.path.join(SHARED_OBJECTS_DIR, "libpowermodels.dylib")
 
         # Load the shared library
         self.power_models_lib = ffi.dlopen(SHARED_OBJECT)
@@ -32,7 +34,7 @@ class PowerModelsBackend(grid2op.Backend):
         int c_load_grid(const char* input_data);
         """)
         ffi.cdef("""
-        int c_solve_power_flow();
+        int c_solve_power_flow(const char* input_data);
         """)
 
     def grid2op_to_powermodels_json(self):
@@ -148,8 +150,13 @@ class PowerModelsBackend(grid2op.Backend):
     def apply_action(self, backendAction: Union["grid2op.Action._backendAction._BackendAction", None]) -> None:
         pass
 
-    def runpf(self) -> Tuple[bool, Union[Exception, None]]:
-        status = self.power_models_lib.c_solve_power_flow()
+    def runpf(self,
+              path: Union[os.PathLike, str],
+              filename: Optional[Union[os.PathLike, str]] = None) -> Tuple[bool, Union[Exception, None]]:
+
+        full_path = self.make_complete_path(path, filename)
+        input_data_c = FFI.new("char[]", full_path.encode("utf-8"))
+        status = self.power_models_lib.c_solve_power_flow(input_data_c)
 
         if status != 0:
             raise RuntimeError(f"PowerModels solve_power_flow failed with status {status}")
